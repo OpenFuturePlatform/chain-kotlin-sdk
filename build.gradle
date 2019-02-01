@@ -9,29 +9,6 @@ plugins {
 group = 'io.openfuture.chain'
 sourceCompatibility = JavaVersion.VERSION_1_8
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-    manifest {
-        attributes(
-                "Implementation-Version": version,
-                'Built-By': System.properties['user.name'],
-                'Created-By': "Gradle ${gradle.gradleVersion}",
-                'Build-Jdk': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
-                'Build-OS': "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
-//                'Export-Package': "io.openfuture.chain.smartcontract;version=${version}"
-        )
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId = "smartcontract-sdk"
-            artifacts = [sourceJar]
-        }
-    }
-}
-
 repositories {
     mavenCentral()
 }
@@ -70,5 +47,26 @@ compileTestKotlin {
 jar {
     manifest {
         attributes("Implementation-Version": version)
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.output
+    manifest {
+        attributes(
+                "Implementation-Version": version,
+                'Created-By': "Gradle ${gradle.gradleVersion}",
+                'Build-Jdk': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+                'Build-OS': "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
+        )
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = "smartcontract-sdk"
+            artifact sourceJar
+        }
     }
 }
