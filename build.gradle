@@ -1,0 +1,72 @@
+plugins {
+    id 'idea'
+    id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.20'
+    id 'org.jetbrains.kotlin.kapt' version '1.3.20'
+    id 'io.zensoft.versioning' version '1.0.0'
+}
+
+group = 'io.openfuture.chain'
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Byte code
+    implementation 'org.ow2.asm:asm:7.0'
+    implementation 'org.ow2.asm:asm-commons:7.0'
+
+    // Kotlin
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+
+    // Logger
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'log4j:log4j:1.2.17'
+
+    // Test
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.assertj:assertj-core:3.11.1'
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+}
+
+// Jar
+jar {
+    manifest {
+        attributes("Implementation-Version": version)
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.output
+    manifest {
+        attributes(
+                "Implementation-Version": version,
+                'Created-By': "Gradle ${gradle.gradleVersion}",
+                'Build-Jdk': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+                'Build-OS': "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
+        )
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = "smartcontract-sdk"
+            artifact sourceJar
+        }
+    }
+}
