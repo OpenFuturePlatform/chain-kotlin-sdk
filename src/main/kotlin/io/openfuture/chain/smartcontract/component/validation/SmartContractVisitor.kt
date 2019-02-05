@@ -72,9 +72,7 @@ class SmartContractVisitor : ClassVisitor(ASM6) {
         }
 
         override fun visitTryCatchBlock(start: Label?, end: Label?, handler: Label?, type: String?) {
-            if (null != type && !Whitelist.isAllowedException(type.asPackagePath)) {
-                validationResult.addError("Disallowed to throw ${type.asPackagePath} exception")
-            }
+            validateType(type?.asPackagePath)
 
             log.debug("TRY_CATCH: type-$type")
             super.visitTryCatchBlock(start, end, handler, type)
