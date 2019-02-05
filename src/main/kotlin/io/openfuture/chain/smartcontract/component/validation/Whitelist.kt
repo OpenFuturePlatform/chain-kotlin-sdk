@@ -2,13 +2,7 @@ package io.openfuture.chain.smartcontract.component.validation
 
 object Whitelist {
 
-    fun isAllowedType(className: String): Boolean {
-        if (whiteList.contains(className)) {
-            return true
-        }
-
-        return false
-    }
+    fun isAllowedType(className: String): Boolean = whiteList.contains(className)
 
     private val whiteList = setOf(
         Boolean::class.java.name,
