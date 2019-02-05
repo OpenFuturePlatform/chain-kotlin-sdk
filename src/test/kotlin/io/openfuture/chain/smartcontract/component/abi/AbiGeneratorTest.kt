@@ -11,7 +11,7 @@ class AbiGeneratorTest {
 
         val abi = AbiGenerator.generate(bytes)
 
-        assertThat(abi).isEqualTo("""[{"name": "execute","inputs": []},{"name": "another","inputs": ["java.lang.String","long"]}]""")
+        assertThat(abi).isEqualTo("""[{"name":"execute","inputs":[]},{"name":"another","inputs":["java.lang.String","long"]}]""")
     }
 
 }
