@@ -1,5 +1,6 @@
 package io.openfuture.chain.smartcontract.component.abi
 
+import io.openfuture.chain.smartcontract.model.Abi
 import org.objectweb.asm.ClassReader
 
 object AbiGenerator {
@@ -10,7 +11,7 @@ object AbiGenerator {
         val visitor = AbiVisitor()
         reader.accept(visitor, ClassReader.SKIP_DEBUG)
 
-        return visitor.abi.getAbi()
+        return Abi.getJson(visitor.abi)
     }
 
 }
