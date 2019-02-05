@@ -3,10 +3,6 @@ package io.openfuture.chain.smartcontract.component.validation
 object Whitelist {
 
     fun isAllowedType(className: String): Boolean {
-        if (primitives.contains(className)) {
-            return true
-        }
-
         if (whiteList.contains(className)) {
             return true
         }
@@ -14,7 +10,7 @@ object Whitelist {
         return false
     }
 
-    private val primitives = setOf(
+    private val whiteList = setOf(
         Boolean::class.java.name,
         Char::class.java.name,
         Byte::class.java.name,
@@ -23,10 +19,8 @@ object Whitelist {
         Long::class.java.name,
         Float::class.java.name,
         Double::class.java.name,
-        Void::class.javaPrimitiveType!!.name
-    )
+        Void::class.javaPrimitiveType!!.name,
 
-    private val whiteList = setOf(
         "java.lang.Boolean",
         "java.lang.Character",
         "java.lang.Byte",
