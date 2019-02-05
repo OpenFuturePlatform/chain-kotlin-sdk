@@ -4,6 +4,8 @@ object Whitelist {
 
     fun isAllowedType(className: String): Boolean = whiteList.contains(className)
 
+    fun isAllowedMethod(methodName: String): Boolean = !blackListMethods.contains(methodName)
+
     private val whiteList = setOf(
         Boolean::class.java.name,
         Char::class.java.name,
@@ -31,6 +33,13 @@ object Whitelist {
         "java.util.Arrays",
         "java.util.HashMap",
         "java.util.HashSet"
+    )
+
+    private val blackListMethods = setOf(
+        "java.lang.Object.getClass",
+        "java.lang.Object.wait",
+        "java.lang.Object.notify",
+        "java.lang.Object.notifyAll"
     )
 
 }
