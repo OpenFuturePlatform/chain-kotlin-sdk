@@ -38,7 +38,7 @@ class SmartContractVisitor : ClassVisitor(ASM6) {
         return super.visitField(access, name, descriptor, signature, value)
     }
 
-    override fun visitMethod(access: Int, name: String?, descriptor: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+    override fun visitMethod(access: Int, name: String, descriptor: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
         if (Modifier.isNative(access)) {
             validationResult.addError("Native methods not allowed")
         }
@@ -83,6 +83,18 @@ class SmartContractVisitor : ClassVisitor(ASM6) {
 
             log.debug("TYPE: type-$type")
             super.visitTypeInsn(opcode, type)
+        }
+
+        override fun visitMethodInsn(opcode: Int, owner: String?, name: String?, descriptor: String?, isInterface: Boolean) {
+            owner?.let {
+                name?.let {
+                    val fullName = "$owner/$name".asPackagePath
+                    if (!Whitelist.isAllowedMethod(fullName)) {
+                        validationResult.addError("Method`s name: $fullName is not allowed")
+                    }
+                }
+            }
+            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
         }
 
     }
