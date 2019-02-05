@@ -32,4 +32,13 @@ class SmartContractValidatorTest {
         assertThat(result).isFalse()
     }
 
+    @Test
+    fun validateWhenMethodNameIsWaitShouldReturnFalse() {
+        val bytes = this::class.java.getResourceAsStream("/classes/JavaContractWaitMethod.class").readBytes()
+
+        val result = SmartContractValidator.validate(bytes)
+
+        assertThat(result).isFalse()
+    }
+
 }
