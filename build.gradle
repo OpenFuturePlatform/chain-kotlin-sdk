@@ -9,7 +9,7 @@ plugins {
     id "maven"
 }
 
-group = 'io.openfuture.chain'
+group = 'io.openfuture'
 version = '${VERSION}'
 sourceCompatibility = JavaVersion.VERSION_1_8
 
@@ -54,8 +54,11 @@ jar {
     }
 }
 
+jar { enabled = true }
+
 task sourceJar(type: Jar) {
-    from sourceSets.main.output
+    from sourceSets.main.allSource
+    classifier = "sources"
     manifest {
         attributes(
                 "Implementation-Version": version,
