@@ -1,0 +1,50 @@
+image: openjdk:8-jdk
+
+stages:
+  - build
+  - upload
+
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - apt update && apt install gettext-base
+
+
+###################
+# Build
+###################
+build-jar:
+  stage: build
+  variables:
+    VERSION: build
+    OSSRHUSERNAME: ossrhusername
+    OSSRHPASSWORD: ossrhpassword
+  script:
+    - envsubst '${VERSION}','${OSSRHUSERNAME}','${OSSRHPASSWORD}' < build.gradle > build.gradle.new
+    - mv build.gradle.new build.gradle
+    - ./gradlew assemble
+  except:
+    - tags
+
+
+###################
+# Upload
+###################
+upload-jar:
+  stage: upload
+  variables:
+    OSSRHUSERNAME: ${OSSRH_LOGIN}
+    OSSRHPASSWORD: ${OSSRH_PASS}
+  script:
+    - VERSION=$(echo ${CI_COMMIT_REF_NAME} | sed "s/v//")
+    - export VERSION=$VERSION
+    - envsubst '${VERSION}','${OSSRHUSERNAME}','${OSSRHPASSWORD}' < build.gradle > build.gradle.new
+    - mv build.gradle.new build.gradle
+    - mkdir .gradle
+    - echo "$GPG_KEY_PRIVATE" > private.key
+    - gpg --import private.key
+    - gpg --export-secret-keys -o secring.gpg
+    - echo "$GRADLE_PROPERTIES" > $GRADLE_USER_HOME/gradle.properties
+    - ./gradlew -Psign uploadArchives
+    - ./gradlew closeAndReleaseRepository
+  only:
+    - tags
