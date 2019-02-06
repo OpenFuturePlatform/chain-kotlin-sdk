@@ -4,9 +4,13 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.20'
     id 'org.jetbrains.kotlin.kapt' version '1.3.20'
     id 'io.zensoft.versioning' version '1.0.0'
+    id "signing"
+    id "io.codearte.nexus-staging" version "0.11.0"
+    id "maven"
 }
 
-group = 'io.openfuture.chain'
+group = 'io.openfuture'
+version = '${VERSION}'
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
@@ -52,8 +56,11 @@ jar {
     }
 }
 
+jar { enabled = true }
+
 task sourceJar(type: Jar) {
-    from sourceSets.main.output
+    from sourceSets.main.allSource
+    classifier = "sources"
     manifest {
         attributes(
                 "Implementation-Version": version,
@@ -62,6 +69,68 @@ task sourceJar(type: Jar) {
                 'Build-OS': "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
         )
     }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = "javadoc"
+    from "build/docs/javadoc"
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourceJar
+}
+
+if (project.hasProperty("sign")) {
+    signing {
+        sign configurations.archives
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: '${OSSRHUSERNAME}', password: '${OSSRHPASSWORD}')
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: '${OSSRHUSERNAME}', password: '${OSSRHPASSWORD}')
+            }
+
+            pom.project {
+                name "open-chain-kotlin-sdk"
+                packaging "jar"
+                url "https://github.com/OpenFuturePlatform/open-chain-kotlin-sdk"
+                description "OPEN Platform Kotlin SDK"
+
+                licenses {
+                    license {
+                        name "MIT licence"
+                        url "https://github.com/OpenFuturePlatform/open-chain-kotlin-sdk/blob/master/LICENCE.txt"
+                    }
+                }
+
+                scm {
+                    url "https://github.com/OpenFuturePlatform/open-chain-kotlin-sdk"
+                }
+
+                developers {
+                    developer {
+                        id "openplatform"
+                        name "OPEN Platform"
+                    }
+                }
+            }
+        }
+    }
+}
+
+nexusStaging {
+    numberOfRetries = 40
+    delayBetweenRetriesInMillis = 8000
 }
 
 publishing {
