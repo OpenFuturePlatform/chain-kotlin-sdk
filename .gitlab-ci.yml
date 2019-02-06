@@ -47,4 +47,8 @@ upload-jar:
     - ./gradlew -Psign uploadArchives
     - ./gradlew closeAndReleaseRepository
   only:
+<<<<<<< HEAD
     - tags
+=======
+    - tags
+>>>>>>> 0c6e3177f366107b1ef69e14b8e80b9cca699d7d
