@@ -2,10 +2,6 @@ package io.openfuture.chain.smartcontract.component.validation
 
 object Whitelist {
 
-    fun isAllowedType(className: String): Boolean = whiteList.contains(className)
-
-    fun isAllowedMethod(methodName: String): Boolean = !blackListMethods.contains(methodName)
-
     private val whiteList = setOf(
         Boolean::class.java.name,
         Char::class.java.name,
@@ -41,5 +37,10 @@ object Whitelist {
         "java.lang.Object.notify",
         "java.lang.Object.notifyAll"
     )
+
+
+    fun isAllowedType(className: String): Boolean = whiteList.contains(className)
+
+    fun isAllowedMethod(methodName: String): Boolean = !blackListMethods.contains(methodName)
 
 }

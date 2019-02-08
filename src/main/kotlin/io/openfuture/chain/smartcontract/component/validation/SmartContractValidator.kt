@@ -5,11 +5,14 @@ import org.slf4j.LoggerFactory
 
 object SmartContractValidator {
 
+    private val log = LoggerFactory.getLogger(SmartContractValidator::class.java)
+
+
     fun validate(bytes: ByteArray): Boolean {
-        val reader:ClassReader
+        val reader: ClassReader
         try {
             reader = ClassReader(bytes)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             log.warn("Bytes does not match with bytecode")
             return false
         }
@@ -25,7 +28,5 @@ object SmartContractValidator {
 
         return true
     }
-
-    private val log = LoggerFactory.getLogger(SmartContractValidator::class.java)
 
 }
