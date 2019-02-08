@@ -6,7 +6,13 @@ import org.slf4j.LoggerFactory
 object SmartContractValidator {
 
     fun validate(bytes: ByteArray): Boolean {
-        val reader = ClassReader(bytes)
+        val reader:ClassReader
+        try {
+            reader = ClassReader(bytes)
+        }catch (e:Exception){
+            log.warn("Bytes does not match with bytecode")
+            return false
+        }
 
         val visitor = SmartContractVisitor()
         reader.accept(visitor, ClassReader.SKIP_DEBUG)
