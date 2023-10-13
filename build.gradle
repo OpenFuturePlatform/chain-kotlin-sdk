@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.20'
     id 'org.jetbrains.kotlin.kapt' version '1.3.20'
     id "signing"
-    id "io.codearte.nexus-staging" version "0.11.0"
+    id "io.codearte.nexus-staging" version "0.30.0"
     id "maven-publish"
     id "io.zensoft.versioning" version "1.1.0"
 }
@@ -57,19 +57,9 @@ jar { enabled = true }
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
-    classifier = "sources"
-    manifest {
-        attributes(
-                "Implementation-Version": version,
-                'Created-By': "Gradle ${gradle.gradleVersion}",
-                'Build-Jdk': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
-                'Build-OS': "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
-        )
-    }
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = "javadoc"
     from "build/docs/javadoc"
 }
 
@@ -77,12 +67,6 @@ artifacts {
     archives jar
     archives javadocJar
     archives sourceJar
-}
-
-if (project.hasProperty("sign")) {
-    signing {
-        sign configurations.archives
-    }
 }
 
 publishing {
@@ -94,10 +78,7 @@ publishing {
                 name = 'open-chain-kotlin-sdk'
                 description = 'OPEN Platform Kotlin SDK'
                 url = 'https://github.com/OpenFuturePlatform/open-chain-kotlin-sdk'
-                properties = [
-                        myProp: "value",
-                        "prop.with.dots": "anotherValue"
-                ]
+
                 licenses {
                     license {
                         name = 'MIT licence'
@@ -119,11 +100,11 @@ publishing {
 
     repositories {
         maven {
-            name 'deploy'
-            url 'https://oss.sonatype.org/content/repositories/snapshots/'
+            name = 'deploy'
+            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
             credentials {
-                username '${OSSRHUSERNAME}'
-                password '${OSSRHPASSWORD}'
+                username = '${OSSRHUSERNAME}'
+                password = '${OSSRHPASSWORD}'
             }
         }
     }
